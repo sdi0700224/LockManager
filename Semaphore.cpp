@@ -1,4 +1,4 @@
-#include "semaphore.h"
+#include "Semaphore.h"
 #include <stdexcept>
 
 using namespace std;
