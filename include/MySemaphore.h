@@ -1,11 +1,11 @@
 #pragma once
 #include <semaphore.h>
 
-class Semaphore
+class MySemaphore
 {
 public:
-    Semaphore();
-    ~Semaphore();
+    MySemaphore();
+    ~MySemaphore();
 
     void Init(int value);
     void Destroy();

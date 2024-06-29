@@ -60,7 +60,7 @@ int Server::GetBlockNumber(int custId)
 
 void Server::InitializeCS()
 {
-    TotalSizeCS = sizeof(int) + (SegmentsNum * sizeof(SegmentLock)) + sizeof(Statistics) + sizeof(Semaphore); // Total size of CS
+    TotalSizeCS = sizeof(int) + (SegmentsNum * sizeof(SegmentLock)) + sizeof(Statistics) + sizeof(MySemaphore); // Total size of CS
 
     // Create and open a new shared memory object
     SegmentShmFD = shm_open(ShmSegmentName, O_CREAT | O_RDWR, 0666);
@@ -112,7 +112,7 @@ void Server::InitializeCS()
     statistics->MaxDelay = 0.0;
 
     void* semMem = reinterpret_cast<char*>(MappedMemory) + sizeof(int) + (SegmentsNum * sizeof(SegmentLock)) + sizeof(Statistics);
-    Semaphore* sem = reinterpret_cast<Semaphore*>(semMem);
+    MySemaphore* sem = reinterpret_cast<MySemaphore*>(semMem);
 
     sem->Init(1);
 }
@@ -130,7 +130,7 @@ void Server::DestroyCS()
     }
 
     void* statisticsSemMem = reinterpret_cast<char*>(MappedMemory) + sizeof(int) + (SegmentsNum * sizeof(SegmentLock)) + sizeof(Statistics);
-    Semaphore* sem = reinterpret_cast<Semaphore*>(statisticsSemMem);
+    MySemaphore* sem = reinterpret_cast<MySemaphore*>(statisticsSemMem);
 
     // Destroy Statistics semaphore
     sem->Destroy();
@@ -168,8 +168,8 @@ void Server::CreateAndWaitClients(int numOfReaders, int numOfWriters)
 
     char readerFilename[32];
     char writerFilename[32];
-    strcpy(readerFilename, "./Reader");
-    strcpy(writerFilename, "./Writer");
+    strcpy(readerFilename, "./bin/Reader");
+    strcpy(writerFilename, "./bin/Writer");
 
     auto CreateProcesses = [&](int numOfProcesses, char* processFilename)
     {
@@ -192,7 +192,7 @@ void Server::CreateAndWaitClients(int numOfReaders, int numOfWriters)
                     int waitTime = GenerateRandomInt(1, ReaderWaitingMaxInSec);
                     snprintf(idStr, sizeof(idStr), "%d,%d", startId, endId);
                     snprintf(waitStr, sizeof(waitStr), "%d", waitTime);
-                    execlp(processFilename, "Reader", "-f", Filename, "-l", idStr, "-d", waitStr, "-s", ShmSegmentName, (char*)NULL);
+                    execlp(readerFilename, readerFilename, "-f", Filename, "-l", idStr, "-d", waitStr, "-s", ShmSegmentName, (char*)NULL);
                 }
                 else if (strcmp(processFilename, writerFilename) == 0)
                 {
@@ -202,7 +202,7 @@ void Server::CreateAndWaitClients(int numOfReaders, int numOfWriters)
                     snprintf(idStr, sizeof(idStr), "%d", id);
                     snprintf(valueStr, sizeof(valueStr), "%d", value);
                     snprintf(waitStr, sizeof(waitStr), "%d", waitTime);
-                    execlp(processFilename, "Writer", "-f", Filename, "-l", idStr, "-v", valueStr, "-d", waitStr, "-s", ShmSegmentName, (char*)NULL);
+                    execlp(writerFilename, writerFilename, "-f", Filename, "-l", idStr, "-v", valueStr, "-d", waitStr, "-s", ShmSegmentName, (char*)NULL);
                 }
                 
                 cerr << "Exec failed for " << processFilename << endl;

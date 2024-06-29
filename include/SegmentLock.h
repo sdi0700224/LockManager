@@ -1,5 +1,5 @@
 #pragma once
-#include "Semaphore.h"
+#include "MySemaphore.h"
 
 class SegmentLock
 {
@@ -14,9 +14,9 @@ public:
     void WriterUnlock();
 
 private:
-    Semaphore In;
-    Semaphore Out;
-    Semaphore Wrt;
+    MySemaphore In;
+    MySemaphore Out;
+    MySemaphore Wrt;
     int CtrIn;
     int CtrOut;
     bool Wait;

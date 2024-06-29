@@ -1,12 +1,12 @@
-#include "Semaphore.h"
+#include "MySemaphore.h"
 #include <stdexcept>
 
 using namespace std;
 
-Semaphore::Semaphore() : IsInitialized(false)
+MySemaphore::MySemaphore() : IsInitialized(false)
 {}
 
-Semaphore::~Semaphore()
+MySemaphore::~MySemaphore()
 {
     if (IsInitialized)
     {
@@ -14,7 +14,7 @@ Semaphore::~Semaphore()
     }
 }
 
-void Semaphore::Init(int value)
+void MySemaphore::Init(int value)
 {
     if (sem_init(&Sem, 1, value) != 0)
     {
@@ -23,13 +23,13 @@ void Semaphore::Init(int value)
     IsInitialized = true;
 }
 
-void Semaphore::Destroy()
+void MySemaphore::Destroy()
 {
     sem_destroy(&Sem);
     IsInitialized = false;
 }
 
-void Semaphore::Wait()
+void MySemaphore::Wait()
 {
     int retValue;
     do
@@ -44,7 +44,7 @@ void Semaphore::Wait()
     }
 }
 
-void Semaphore::Release()
+void MySemaphore::Release()
 {
     if (sem_post(&Sem) != 0)
     {
