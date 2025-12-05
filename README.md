@@ -19,9 +19,6 @@ As expected this app is fast for big reader load and small writer load and activ
 code and less error prone that a record level locking policy. Of course it does not provide the same granularity but I think it is a
 decent way to access small datatypes like integers.
 
-As always coded cleanly, tried to keep some coding standars regarding naming, project architecture and reusability, tested with valgrid 
-for leaks and errors.
-
 ## Makefile
 
 Added Dubug command to use valgrid
